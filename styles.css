@@ -121,6 +121,20 @@ body {
     margin-bottom: 20px;
 }
 
+.alert {
+    background-color: #ffe5e5;
+    color: #ff0000;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.data-note {
+    background-color: #fff6e5;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 footer {
     text-align: center;
     padding: 20px 0;

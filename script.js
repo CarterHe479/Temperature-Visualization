@@ -6,6 +6,11 @@ let yearlyAvgTemp = [];
 let firstWarmYear = null;
 let yearRange = { min: 1950, max: 2024 };
 let selectedYearA = 2020;
+let selectedYearC = 2020;
+let charts = {};
+
+// Complete data years - years that have both temperature and turbidity data
+const completeDataYears = [1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020];
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,6 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('selectedYearA').textContent = selectedYearA;
         updateMonthlyTemperatureChart();
     });
+
+    document.getElementById('yearSliderC').addEventListener('input', (e) => {
+        selectedYearC = parseInt(e.target.value);
+        document.getElementById('yearDisplayC').textContent = selectedYearC;
+        document.getElementById('unavailableYear').textContent = selectedYearC;
+        updateTemperatureTurbidityCharts();
+    });
+
+    // Display complete data years
+    document.getElementById('completeDataYears').textContent = completeDataYears.join(', ');
 });
 
 // Initialize tabs
@@ -39,6 +54,12 @@ function initTabs() {
             button.classList.add('active');
             const tabId = button.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
+
+            // Add this new code: Special handling for Part C tab
+            if (tabId === 'partC') {
+                console.log("Part C tab selected, updating charts");
+                setTimeout(updateTemperatureTurbidityCharts, 100); // Small delay to ensure tab is visible
+            }
         });
     });
 }
@@ -118,11 +139,16 @@ function processWeatherData(data) {
     // Update UI sliders
     document.getElementById('yearSliderA').min = yearRange.min;
     document.getElementById('yearSliderA').max = yearRange.max;
+    document.getElementById('yearSliderC').min = yearRange.min;
+    document.getElementById('yearSliderC').max = yearRange.max;
 
     // Default to most recent year
     selectedYearA = yearRange.max;
+    selectedYearC = yearRange.max;
     document.getElementById('yearSliderA').value = selectedYearA;
+    document.getElementById('yearSliderC').value = selectedYearC;
     document.getElementById('yearDisplayA').textContent = selectedYearA;
+    document.getElementById('yearDisplayC').textContent = selectedYearC;
     document.getElementById('selectedYearA').textContent = selectedYearA;
 
     // Process monthly averages
@@ -311,8 +337,51 @@ function initCharts() {
         }
     });
 
+    // Temperature vs Turbidity Line Chart
+    const tempTurbidityLineCtx = document.getElementById('tempTurbidityLineChart').getContext('2d');
+    charts.tempTurbidityLineChart = new Chart(tempTurbidityLineCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: []
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Temperature vs Turbidity Scatter Chart
+    const tempTurbidityScatterCtx = document.getElementById('tempTurbidityScatterChart').getContext('2d');
+    charts.tempTurbidityScatterChart = new Chart(tempTurbidityScatterCtx, {
+        type: 'scatter',
+        data: {
+            datasets: []
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Temperature (°F)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Turbidity (NTU)'
+                    }
+                }
+            }
+        }
+    });
+
     // Initial update
     updateMonthlyTemperatureChart();
+    updateTemperatureTurbidityCharts();
 }
 
 // Update Monthly Temperature Chart
@@ -321,5 +390,103 @@ function updateMonthlyTemperatureChart() {
         charts.monthlyTempChart.data.labels = getMonthlyChartData(selectedYearA).map(item => item.month);
         charts.monthlyTempChart.data.datasets[0].data = getMonthlyChartData(selectedYearA).map(item => item.temperature);
         charts.monthlyTempChart.update();
+    }
+}
+
+// Update Temperature vs Turbidity Charts
+function updateTemperatureTurbidityCharts() {
+    // Check if data is available for selected year
+    const hasData = completeDataYears.includes(selectedYearC);
+    const alertElement = document.getElementById('dataAvailabilityAlert');
+    if (!hasData) {
+        alertElement.style.display = 'block';
+        return;
+    } else {
+        alertElement.style.display = 'none';
+    }
+
+    // Filter data for selected year
+    const weatherYearData = weatherData.filter(row => row.year === selectedYearC);
+    const waterQualityYearData = waterQualityData.filter(row => row.year === selectedYearC);
+
+    // Group water quality data by month
+    const waterQualityByMonth = _.groupBy(waterQualityYearData, 'month');
+
+    // Prepare data for line chart
+    const lineChartData = [];
+    for (let month = 1; month <= 12; month++) {
+        const weatherMonthData = weatherYearData.filter(row => row.month === month);
+        const waterQualityMonthData = waterQualityByMonth[month] || [];
+
+        const avgTemp = _.meanBy(weatherMonthData, 'Ftemp');
+        const avgTurbidity = _.meanBy(waterQualityMonthData, 'turbidity');
+
+        lineChartData.push({
+            month: month,
+            avgTemp: avgTemp,
+            avgTurbidity: avgTurbidity
+        });
+    }
+
+    // Update Line Chart
+    if (charts.tempTurbidityLineChart) {
+        charts.tempTurbidityLineChart.data.labels = lineChartData.map(item => item.month);
+        charts.tempTurbidityLineChart.data.datasets = [
+            {
+                label: 'Average Temperature (°F)',
+                data: lineChartData.map(item => item.avgTemp),
+                backgroundColor: 'rgba(255, 99, 71, 0.6)',
+                borderColor: 'rgba(255, 99, 71, 1)',
+                borderWidth: 1,
+                yAxisID: 'y1'
+            },
+            {
+                label: 'Average Turbidity (NTU)',
+                data: lineChartData.map(item => item.avgTurbidity),
+                backgroundColor: 'rgba(255, 165, 0, 0.6)',
+                borderColor: 'rgba(255, 165, 0, 1)',
+                borderWidth: 1,
+                yAxisID: 'y2'
+            }
+        ];
+        charts.tempTurbidityLineChart.options.scales = {
+            y1: {
+                type: 'linear',
+                position: 'left',
+                beginAtZero: true
+            },
+            y2: {
+                type: 'linear',
+                position: 'right',
+                beginAtZero: true
+            }
+        };
+        charts.tempTurbidityLineChart.update();
+    }
+
+    // Prepare data for scatter chart
+    const scatterChartData = [];
+    weatherYearData.forEach(weatherRow => {
+        const matchingWaterQuality = waterQualityYearData.find(waterRow => waterRow.date.getTime() === weatherRow.date.getTime());
+        if (matchingWaterQuality) {
+            scatterChartData.push({
+                x: weatherRow.Ftemp,
+                y: matchingWaterQuality.turbidity
+            });
+        }
+    });
+
+    // Update Scatter Chart
+    if (charts.tempTurbidityScatterChart) {
+        charts.tempTurbidityScatterChart.data.datasets = [
+            {
+                label: 'Temperature vs Turbidity',
+                data: scatterChartData,
+                backgroundColor: 'rgba(255, 140, 0, 0.6)',
+                borderColor: 'rgba(255, 140, 0, 1)',
+                borderWidth: 1
+            }
+        ];
+        charts.tempTurbidityScatterChart.update();
     }
 }    
