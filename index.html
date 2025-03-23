@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Weather & Water Quality Data Visualization</title>
+    <title>Weather Data Visualization</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Chart.js for visualization -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -17,7 +17,7 @@
 <body>
     <div class="container">
         <header>
-            <h1 class="title">New Cornell Tech Weather & Water Quality Data Visualization</h1>
+            <h1 class="title">Cornell Tech Weather Data Visualization</h1>
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p>Loading data from CSV files...</p>
@@ -25,14 +25,13 @@
         </header>
 
         <div class="data-source-info">
-            <p>Data sources: <code>weather.csv</code> and <code>Drinking_Water_Quality_Distribution_Monitoring_Data_20250313.csv</code></p>
+            <p>Data sources: <code>weather.csv</code></p>
         </div>
 
         <div class="tab-container">
             <div class="tabs">
                 <button class="tab-button active" data-tab="partA">Part A: Monthly Temperatures</button>
                 <button class="tab-button" data-tab="partB">Part B: First Warm Year</button>
-                <button class="tab-button" data-tab="partC">Part C: Temperature vs Turbidity</button>
             </div>
 
             <div class="tab-content">
