@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather & Water Quality Data Visualization</title>
+    <title>New Weather & Water Quality Data Visualization</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Chart.js for visualization -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -12,10 +13,11 @@
     <!-- Lodash for data manipulation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
 </head>
+
 <body>
     <div class="container">
         <header>
-            <h1>Cornell Tech Weather & Water Quality Data Visualization</h1>
+            <h1 class="title">New Cornell Tech Weather & Water Quality Data Visualization</h1>
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p>Loading data from CSV files...</p>
@@ -23,7 +25,7 @@
         </header>
 
         <div class="data-source-info">
-            <p>Data sources: <code>weather.csv</code></p>
+            <p>Data sources: <code>weather.csv</code> and <code>Drinking_Water_Quality_Distribution_Monitoring_Data_20250313.csv</code></p>
         </div>
 
         <div class="tab-container">
@@ -38,16 +40,16 @@
                 <div class="tab-pane active" id="partA">
                     <div class="card">
                         <h2>Monthly Average Temperatures (<span id="selectedYearA">2020</span>)</h2>
-                        
+
                         <div class="control-panel">
                             <label for="yearSliderA">Select Year: <span id="yearDisplayA">2020</span></label>
                             <input type="range" id="yearSliderA" min="1950" max="2024" value="2020" class="slider">
                         </div>
-                        
+
                         <div class="chart-container">
                             <canvas id="monthlyTempChart"></canvas>
                         </div>
-                        
+
                         <p class="description">
                             This visualization shows the average temperature for each month in the selected year,
                             based on actual data from <code>weather.csv</code>.
@@ -60,15 +62,15 @@
                 <div class="tab-pane" id="partB">
                     <div class="card">
                         <h2>When Will Cornell Tech Finally Be Warm?</h2>
-                        
+
                         <div class="chart-container">
                             <canvas id="yearlyTempChart"></canvas>
                         </div>
-                        
+
                         <div class="info-box" id="warmYearInfo">
                             <p>Based on available data, no year has had an average temperature above 55°F yet.</p>
                         </div>
-                        
+
                         <p class="description">
                             This chart shows yearly average temperatures and identifies when the location
                             first exceeded the 55°F yearly average threshold.
@@ -80,7 +82,7 @@
                 <div class="tab-pane" id="partC">
                     <div class="card">
                         <h2>Temperature vs. Water Turbidity Correlation</h2>
-                        
+
                         <div class="control-panel">
                             <label for="yearSliderC">Select Year for Analysis: <span id="yearDisplayC">2020</span></label>
                             <input type="range" id="yearSliderC" min="1950" max="2024" value="2020" class="slider">
@@ -88,24 +90,24 @@
                                 <small>Years with complete data: <span id="completeDataYears"></span></small>
                             </div>
                         </div>
-                        
+
                         <div id="dataAvailabilityAlert" class="alert" style="display: none;">
                             <p>Turbidity data is not available for <span id="unavailableYear">2020</span>. Please select a different year.</p>
                         </div>
-                        
+
                         <div class="chart-container">
                             <canvas id="tempTurbidityLineChart"></canvas>
                         </div>
-                        
+
                         <div class="chart-container">
                             <canvas id="tempTurbidityScatterChart"></canvas>
                         </div>
-                        
+
                         <p class="description" id="correlationDescription">
                             This analysis examines the relationship between temperature and water turbidity throughout the selected year.
                             Data comes from <code>weather.csv</code> and <code>Drinking_Water_Quality_Distribution_Monitoring_Data_20250313.csv</code>.
                         </p>
-                        
+
                         <div class="data-note">
                             <p><strong>Note:</strong> For years with insufficient data coverage, synthetic data may be used to ensure visualization completeness.</p>
                         </div>
@@ -113,7 +115,7 @@
                 </div>
             </div>
         </div>
-        
+
         <footer>
             <p>This visualization uses Chart.js, PapaParse, and Lodash libraries.</p>
         </footer>
@@ -121,4 +123,5 @@
 
     <script src="script.js"></script>
 </body>
-</html>
+
+</html>    
