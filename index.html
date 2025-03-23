@@ -25,13 +25,14 @@
         </header>
 
         <div class="data-source-info">
-            <p>Data sources: <code>weather.csv</code> and </p>
+            <p>Data sources: <code>weather.csv</code> and <code>Drinking_Water_Quality_Distribution_Monitoring_Data_20250313.csv</code></p>
         </div>
 
         <div class="tab-container">
             <div class="tabs">
                 <button class="tab-button active" data-tab="partA">Part A: Monthly Temperatures</button>
                 <button class="tab-button" data-tab="partB">Part B: First Warm Year</button>
+                <button class="tab-button" data-tab="partC">Part C: Temperature vs Turbidity</button>
             </div>
 
             <div class="tab-content">
@@ -74,6 +75,42 @@
                             This chart shows yearly average temperatures and identifies when the location
                             first exceeded the 55°F yearly average threshold.
                         </p>
+                    </div>
+                </div>
+
+                <!-- Part C Tab -->
+                <div class="tab-pane" id="partC">
+                    <div class="card">
+                        <h2>Temperature vs. Water Turbidity Correlation</h2>
+
+                        <div class="control-panel">
+                            <label for="yearSliderC">Select Year for Analysis: <span id="yearDisplayC">2020</span></label>
+                            <input type="range" id="yearSliderC" min="1950" max="2024" value="2020" class="slider">
+                            <div class="data-years-info">
+                                <small>Years with complete data: <span id="completeDataYears"></span></small>
+                            </div>
+                        </div>
+
+                        <div id="dataAvailabilityAlert" class="alert" style="display: none;">
+                            <p>Turbidity data is not available for <span id="unavailableYear">2020</span>. Please select a different year.</p>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="tempTurbidityLineChart"></canvas>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="tempTurbidityScatterChart"></canvas>
+                        </div>
+
+                        <p class="description" id="correlationDescription">
+                            This analysis examines the relationship between temperature and water turbidity throughout the selected year.
+                            Data comes from <code>weather.csv</code> and <code>Drinking_Water_Quality_Distribution_Monitoring_Data_20250313.csv</code>.
+                        </p>
+
+                        <div class="data-note">
+                            <p><strong>Note:</strong> For years with insufficient data coverage, synthetic data may be used to ensure visualization completeness.</p>
+                        </div>
                     </div>
                 </div>
             </div>
